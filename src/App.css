@@ -1,3 +1,4 @@
+@import '~antd/dist/antd.css';
 .App {
   text-align: center;
 }
@@ -29,4 +30,36 @@
   to {
     transform: rotate(360deg);
   }
+}
+.ant-modal-body {
+  display: flex;
+  width: 800px;
+  height: 500px;
+}
+.image-box {
+  width: 400px;
+  height: 400px;
+  border: #61dafb 1px solid;
+  position: relative;
+}
+.box-left {
+  display: inline-block;
+  width: 400px;
+  height: 400px;
+}
+.box-right {
+  display: inline-block;
+  width: 400px;
+  height: 400px;
+  overflow: auto;
+  padding: 35px 10px 0 10px;
+}
+.right-row { 
+  display: flex;
+  padding: 0px 15px;
+  border: 1px solid rgb(204, 204, 204);
+  justify-content: space-between;
+  height: 50px;
+  line-height: 50px;
+  margin-bottom: 10px;
 }
