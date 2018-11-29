@@ -8,33 +8,51 @@ class App extends Component {
   state = { 
     visible: true,
     isDraw: false,
-    rects: []
+    rects: [],
   }
   box = '';
-
-  componentDidMount() {
-
+  isDown = false;
+  disX = 0;
+  disY = 0;
+  ix = '';
+  
+  handleMouseDown = (event, index) => {
+    this.disX = event.clientX - event.target.offsetLeft;
+    this.disY = event.clientY - event.target.offsetTop;
+    this.isDown = true;
+    this.ix = index;
   }
- 
-
   handleMouseMove = (event) => {
-    let x = event.pageX - this.canvas.getBoundingClientRect().x;
-    let y = event.pageY - this.canvas.getBoundingClientRect().y;
-
-    this.state.rects.map((item,index) => {
-      if(x >= item.x && x <= item.x+item.width && y >=item.y && y <= item.y+item.height) {
-        this.setState({isDraw: true});
-      } else {
-        this.setState({isDraw: false});
-      }
-    })
-
+    if(!this.isDown) return;
+    let mx = event.clientX - this.disX;
+    let my = event.clientY - this.disY;
+    if(mx + 44 > 400) { // 临界为图片的width
+      mx = 400-46;
+    } else if(mx < 0) {
+      mx = 0;
+    }
+    if(my + 44 > 400) { // 临界为图片的height
+      my = 400-46;
+    } else if(my < 0) {
+      my = 0
+    }
+    this.setState({rects: [{x: mx, y: my, width: 44, height: 44}]})
+  }
+  handleMouseUp = () => {
+    this.isDown = false;
   }
 
   handleClick = (event) => {
     const { rects } = this.state;
     let x = event.pageX - this.box.getBoundingClientRect().x;
     let y = event.pageY - this.box.getBoundingClientRect().y;
+    let isRepeat = false;
+    rects.map((item,index) => {
+      if(x >= item.x && x <= item.x+item.width && y >=item.y && y <= item.y+item.height) {
+        isRepeat = true;
+      } 
+    })
+    if(isRepeat) return false;
     rects.push({x, y, width: 44, height: 44})
     this.setState({rects})
   }
@@ -68,7 +86,11 @@ class App extends Component {
   render() {
     const { isDraw, rects } = this.state;
     return (
-      <div className="App">
+      <div 
+        className="App" 
+        onMouseMove={this.handleMouseMove}
+        onMouseUp={this.handleMouseUp}
+      >
         <Button type="primary" onClick={this.showModal}>
           Open Modal
         </Button>
@@ -103,8 +125,10 @@ class App extends Component {
                         top: item.y,
                         left: item.x,
                         background: 'rgba(102, 170, 255, .2)',
-                        border: 'rgb(102, 170, 255) solid 1px'
+                        border: 'rgb(102, 170, 255) solid 1px',
+                        cursor: 'move'
                       }}
+                      onMouseDown={(event) => this.handleMouseDown(event, index)}
                     >
                     <span>{index}</span>
                     </div>
@@ -112,12 +136,12 @@ class App extends Component {
                 })
               }
             </div>
-          </div>
+          </div> 
           <div className="box-right">
             {
               rects.map((item, index) => {
                 return(
-                  <div key={index} className="right-row">
+                  <div key={index + item} className="right-row">
                     <span>{index}</span>
                     <span>添加商品</span>
                     <span>添加链接</span>
