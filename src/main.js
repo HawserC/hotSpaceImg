@@ -7,15 +7,14 @@ class App extends Component {
   
   state = { 
     visible: true,
-    isDraw: false,
     rects: [],
   }
-  box = '';
-  isDown = false;
-  isResize = false;
-  disX = 0;
-  disY = 0;
-  ix = '';
+  box = ''; // 区域box的ref
+  isDown = false; // 是否按下来控制移动
+  isResize = false; // 是否拉伸rect
+  disX = 0; // 点击的坐标x
+  disY = 0; // 点击的坐标y
+  ix = 0; // 记录rect的index
   
  
   handleMouseDown = (event, index) => {
@@ -23,46 +22,48 @@ class App extends Component {
     this.disY = event.clientY - event.target.offsetTop;
     this.isDown = true;
     this.ix = index;
-    console.log(222)
   }
   handleMouseMove = (event) => {
-    console.log(event.clientX, this.box.getBoundingClientRect().x, '------====------')
-    if(this.isResize) {
-      let rWidth = event.clientX - this.box.getBoundingClientRect().x - 35;
-      let rHeight = event.clientY - this.box.getBoundingClientRect().y - 35;
-      const { rects } = this.state;
-      rects[this.ix] = Object.assign({}, rects[this.ix], {width: rWidth, height: rHeight}) 
-      this.setState({rects})
-      return false;
-
-    }
-    if(!this.isDown) return;
-    let mx = event.clientX - this.disX;
-    let my = event.clientY - this.disY;
-    if(mx + 44 > 400) { // 临界为图片的width
-      mx = 400-46;
-    } else if(mx < 0) {
-      mx = 0;
-    }
-    if(my + 44 > 400) { // 临界为图片的height
-      my = 400-46;
-    } else if(my < 0) {
-      my = 0
-    }
     const { rects } = this.state;
-    rects[this.ix] = {x: mx, y: my, width: 44, height: 44}
+    if(this.isResize) { // rect 拉伸
+      let rWidth = event.clientX - this.box.getBoundingClientRect().x - rects[this.ix].x;
+      let rHeight = event.clientY - this.box.getBoundingClientRect().y - rects[this.ix].y;
+      if(rWidth + rects[this.ix].x > 400) { // 临界为图片的width
+        rWidth = 400 - rects[this.ix].x - 2;
+      }
+      if(rHeight + rects[this.ix].y > 400) { // 临界为图片的height
+        rHeight = 400 -rects[this.ix].y - 2;
+      }
+      rects[this.ix] = Object.assign({}, rects[this.ix], {width: rWidth, height: rHeight}) 
+    } else { // rect 移动
+      if(!this.isDown) return;
+      let mx = event.clientX - this.disX;
+      let my = event.clientY - this.disY;
+      if(mx + rects[this.ix].width > 400) { // 临界为图片的width
+        mx = 400 - rects[this.ix].width - 2;
+      } else if(mx < 0) {
+        mx = 0;
+      }
+      if(my + rects[this.ix].height > 400) { // 临界为图片的height
+        my = 400 - rects[this.ix].height - 2;
+      } else if(my < 0) {
+        my = 0;
+      }
+      rects[this.ix] = Object.assign({}, rects[this.ix], {x: mx, y: my})
+    }
     this.setState({rects})
   }
   handleMouseUp = () => {
-    this.isDown = false;
+    this.isDown = false; 
     this.isResize = false;
   }
+
   handleClick = (event) => {
     const { rects } = this.state;
-    let x = event.pageX - this.box.getBoundingClientRect().x;
-    let y = event.pageY - this.box.getBoundingClientRect().y;
+    let x = event.clientX - this.box.getBoundingClientRect().x;
+    let y = event.clientY - this.box.getBoundingClientRect().y;
     let isRepeat = false;
-    rects.map((item) => {
+    rects.map((item) => { // 判断是否重复
       if(x >= item.x && x <= item.x+item.width && y >=item.y && y <= item.y+item.height) {
         isRepeat = true;
       } 
@@ -72,26 +73,9 @@ class App extends Component {
     this.setState({rects})
   }
 
-  handleResizeMouseMove = (event) => {
-    // this.isDown = false;
-    // if(!this.isResize) return;
-    // let rx = event.clientX - this.disX;
-    // let ry = event.clientY - this.disY;
-    // console.log(this.disY, 'y')
-    // const { rects } = this.state;
-    // rects[this.ix] = Object.assign({}, rects[this.ix], {height: this.disY}) 
-    // this.setState({rects})
-  }
   handleResizeMouseDown = (index) => {
-    console.log(index, 'index')
     this.ix = index;
     this.isResize = true;
-  }
-  
-  showModal = () => {
-    this.setState({
-      visible: true,
-    });
   }
 
   handleOk = (e) => {
@@ -115,16 +99,13 @@ class App extends Component {
   }
 
   render() {
-    const { isDraw, rects } = this.state;
+    const { rects } = this.state;
     return (
       <div 
         className="App" 
         onMouseMove={this.handleMouseMove}
         onMouseUp={this.handleMouseUp}
       >
-        <Button type="primary" onClick={this.showModal}>
-          Open Modal
-        </Button>
         <Modal
           width={800}
           title="编辑热区图"
@@ -141,7 +122,6 @@ class App extends Component {
             <div 
               ref={ref => this.box = ref}
               className="image-box" 
-              style={{cursor: isDraw ? 'move' : 'auto'}}
               onClick={this.handleClick}
             >
               {
