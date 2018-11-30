@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-// import logo from './logo.svg';
 import {  Modal, Button } from 'antd';
 import './App.css';
 
-class App extends Component {
+class HotSpaceModal extends Component {
   
   state = { 
     visible: true,
@@ -102,7 +101,7 @@ class App extends Component {
     const { rects } = this.state;
     return (
       <div 
-        className="App" 
+        className="hot-space" 
         onMouseMove={this.handleMouseMove}
         onMouseUp={this.handleMouseUp}
       >
@@ -201,4 +200,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default HotSpaceModal;
