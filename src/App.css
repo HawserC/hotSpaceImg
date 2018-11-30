@@ -36,11 +36,44 @@
   width: 800px;
   height: 500px;
 }
+
+.rect-index {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 14px;
+  height: 14px;
+  line-height: 14px;
+  background: rgba(102,170,255,.7);
+  text-align: center;
+  font-size: 12px;
+  color: #ffffff;
+}
+.arc {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid #6af;
+  background: #ffffff;
+  position: absolute;
+  cursor: ns-resize;
+}
+.box-span {
+  cursor: pointer;
+}
+.rect {
+  background: rgba(102,170,255, .3);
+  border: 2px solid rgb(102, 170, 255);
+  background: 'rgba(102, 170, 255, .2)';
+  cursor: move;
+}
 .image-box {
   width: 400px;
   height: 400px;
-  border: #61dafb 1px solid;
+  border: 1px solid #61dafb;
   position: relative;
+  cursor: crosshair;
+  background: transparent;
 }
 .box-left {
   display: inline-block;

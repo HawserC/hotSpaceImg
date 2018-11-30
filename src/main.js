@@ -12,15 +12,18 @@ class App extends Component {
   }
   box = '';
   isDown = false;
+  isResize = false;
   disX = 0;
   disY = 0;
   ix = '';
   
+ 
   handleMouseDown = (event, index) => {
     this.disX = event.clientX - event.target.offsetLeft;
     this.disY = event.clientY - event.target.offsetTop;
     this.isDown = true;
     this.ix = index;
+    console.log(222)
   }
   handleMouseMove = (event) => {
     if(!this.isDown) return;
@@ -36,18 +39,19 @@ class App extends Component {
     } else if(my < 0) {
       my = 0
     }
-    this.setState({rects: [{x: mx, y: my, width: 44, height: 44}]})
+    const { rects } = this.state;
+    rects[this.ix] = {x: mx, y: my, width: 44, height: 44}
+    this.setState({rects})
   }
   handleMouseUp = () => {
     this.isDown = false;
   }
-
   handleClick = (event) => {
     const { rects } = this.state;
     let x = event.pageX - this.box.getBoundingClientRect().x;
     let y = event.pageY - this.box.getBoundingClientRect().y;
     let isRepeat = false;
-    rects.map((item,index) => {
+    rects.map((item) => {
       if(x >= item.x && x <= item.x+item.width && y >=item.y && y <= item.y+item.height) {
         isRepeat = true;
       } 
@@ -56,6 +60,21 @@ class App extends Component {
     rects.push({x, y, width: 44, height: 44})
     this.setState({rects})
   }
+
+  handleResizeMouseMove = () => {
+    this.isDown = false;
+    if(!this.isResize) return;
+    console.log(444)
+  }
+  handleResizeMouseDown = () => {
+    this.isResize = true;
+    console.log(555)
+  }
+  handleResizeMouseUp = () => {
+    this.isDown = false;
+    this.isResize = false;
+  }
+
 
   showModal = () => {
     this.setState({
@@ -101,7 +120,7 @@ class App extends Component {
           onOk={this.handleOk}
           onCancel={this.handleCancel}
           footer={[
-            <Button disabled={rects.length == 0 ? true : false} type="primary" onClick={this.handleOk}>确认</Button>,
+            <Button disabled={rects.length === 0 ? true : false} type="primary" onClick={this.handleOk}>确认</Button>,
             <Button onClick={this.handleCancel}>取消</Button>
           ]}
         >
@@ -118,19 +137,46 @@ class App extends Component {
                   return(
                     <div 
                       key={index} 
+                      className="rect"
                       style={{
                         width: item.width,
                         height: item.height,
                         position: 'absolute',
                         top: item.y,
                         left: item.x,
-                        background: 'rgba(102, 170, 255, .2)',
-                        border: 'rgb(102, 170, 255) solid 1px',
-                        cursor: 'move'
+                        zIndex: index
                       }}
                       onMouseDown={(event) => this.handleMouseDown(event, index)}
                     >
-                    <span>{index}</span>
+                      <div className="rect-index">{index}</div>
+                      <div 
+                        className="arc" 
+                        style={{top: '-5px', right: '50%', marginRight: '-5px'}} 
+                        onMouseMove={this.handleResizeMouseMove}
+                        onMouseDown={this.handleResizeMouseDown}
+                        onMouseUp={this.handleResizeMouseUp}
+                      />
+                      <div 
+                        className="arc" 
+                        style={{left: '-5px', top: '50%', marginTop: '-5px'}}
+                        onMouseMove={this.handleResizeMouseMove}
+                        onMouseDown={this.handleResizeMouseDown}
+                        onMouseUp={this.handleResizeMouseUp}
+                      />
+                      <div 
+                        className="arc" 
+                        style={{bottom: '-5px', right: '50%', marginRight: '-5px'}}
+                        onMouseMove={this.handleResizeMouseMove}
+                        onMouseDown={this.handleResizeMouseDown}
+                        onMouseUp={this.handleResizeMouseUp}
+                      />
+                      <div 
+                        className="arc" 
+                        style={{right: '-5px', top: '50%', marginTop: '-5px'}}
+                        onMouseMove={this.handleResizeMouseMove}
+                        onMouseDown={this.handleResizeMouseDown}
+                        onMouseUp={this.handleResizeMouseUp}
+                      />
                     </div>
                   )
                 })
@@ -143,9 +189,9 @@ class App extends Component {
                 return(
                   <div key={index + item} className="right-row">
                     <span>{index}</span>
-                    <span>添加商品</span>
-                    <span>添加链接</span>
-                    <span onClick={() => this.handleRectDel(index)}>删除</span>
+                    <span className="box-span">添加商品</span>
+                    <span className="box-span">添加链接</span>
+                    <span onClick={() => this.handleRectDel(index)} className="box-span">删除</span>
                   </div>
                 )
               })
