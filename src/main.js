@@ -26,6 +26,16 @@ class App extends Component {
     console.log(222)
   }
   handleMouseMove = (event) => {
+    console.log(event.clientX, this.box.getBoundingClientRect().x, '------====------')
+    if(this.isResize) {
+      let rWidth = event.clientX - this.box.getBoundingClientRect().x - 35;
+      let rHeight = event.clientY - this.box.getBoundingClientRect().y - 35;
+      const { rects } = this.state;
+      rects[this.ix] = Object.assign({}, rects[this.ix], {width: rWidth, height: rHeight}) 
+      this.setState({rects})
+      return false;
+
+    }
     if(!this.isDown) return;
     let mx = event.clientX - this.disX;
     let my = event.clientY - this.disY;
@@ -45,6 +55,7 @@ class App extends Component {
   }
   handleMouseUp = () => {
     this.isDown = false;
+    this.isResize = false;
   }
   handleClick = (event) => {
     const { rects } = this.state;
@@ -61,21 +72,22 @@ class App extends Component {
     this.setState({rects})
   }
 
-  handleResizeMouseMove = () => {
-    this.isDown = false;
-    if(!this.isResize) return;
-    console.log(444)
+  handleResizeMouseMove = (event) => {
+    // this.isDown = false;
+    // if(!this.isResize) return;
+    // let rx = event.clientX - this.disX;
+    // let ry = event.clientY - this.disY;
+    // console.log(this.disY, 'y')
+    // const { rects } = this.state;
+    // rects[this.ix] = Object.assign({}, rects[this.ix], {height: this.disY}) 
+    // this.setState({rects})
   }
-  handleResizeMouseDown = () => {
+  handleResizeMouseDown = (index) => {
+    console.log(index, 'index')
+    this.ix = index;
     this.isResize = true;
-    console.log(555)
   }
-  handleResizeMouseUp = () => {
-    this.isDown = false;
-    this.isResize = false;
-  }
-
-
+  
   showModal = () => {
     this.setState({
       visible: true,
@@ -136,6 +148,7 @@ class App extends Component {
                 rects.map((item, index) => {
                   return(
                     <div 
+                      ref={ref => this.rect = ref}
                       key={index} 
                       className="rect"
                       style={{
@@ -148,35 +161,40 @@ class App extends Component {
                       }}
                       onMouseDown={(event) => this.handleMouseDown(event, index)}
                     >
-                      <div className="rect-index">{index}</div>
                       <div 
+                        className="rect-index"
+                        onMouseDown={() => this.handleResizeMouseDown(index)}
+                      >
+                        {index}
+                      </div>
+                      {/* <div 
                         className="arc" 
                         style={{top: '-5px', right: '50%', marginRight: '-5px'}} 
-                        onMouseMove={this.handleResizeMouseMove}
+                        // onMouseMove={this.handleResizeMouseMove}
                         onMouseDown={this.handleResizeMouseDown}
                         onMouseUp={this.handleResizeMouseUp}
                       />
                       <div 
                         className="arc" 
                         style={{left: '-5px', top: '50%', marginTop: '-5px'}}
-                        onMouseMove={this.handleResizeMouseMove}
+                        // onMouseMove={this.handleResizeMouseMove}
                         onMouseDown={this.handleResizeMouseDown}
                         onMouseUp={this.handleResizeMouseUp}
                       />
                       <div 
                         className="arc" 
                         style={{bottom: '-5px', right: '50%', marginRight: '-5px'}}
-                        onMouseMove={this.handleResizeMouseMove}
+                        // onMouseMove={this.handleResizeMouseMove}
                         onMouseDown={this.handleResizeMouseDown}
                         onMouseUp={this.handleResizeMouseUp}
                       />
                       <div 
                         className="arc" 
                         style={{right: '-5px', top: '50%', marginTop: '-5px'}}
-                        onMouseMove={this.handleResizeMouseMove}
+                        // onMouseMove={this.handleResizeMouseMove}
                         onMouseDown={this.handleResizeMouseDown}
                         onMouseUp={this.handleResizeMouseUp}
-                      />
+                      /> */}
                     </div>
                   )
                 })
