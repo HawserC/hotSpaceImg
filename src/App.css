@@ -1,13 +1,5 @@
 @import '~antd/dist/antd.css';
 
-.hot-space {
-  text-align: center;
-}
-.ant-modal-body {
-  display: flex;
-  width: 800px;
-  height: 500px;
-}
 .rect-index {
   position: absolute;
   bottom: 0;
@@ -20,18 +12,6 @@
   font-size: 12px;
   color: #ffffff;
   cursor: nwse-resize;
-}
-.arc {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  border: 1px solid #6af;
-  background: #ffffff;
-  position: absolute;
-  cursor: ns-resize;
-}
-.box-span {
-  cursor: pointer;
 }
 .rect {
   background: rgba(102,170,255, .3);
@@ -46,25 +26,4 @@
   position: relative;
   cursor: crosshair;
   background: transparent;
-}
-.box-left {
-  display: inline-block;
-  width: 400px;
-  height: 400px;
-}
-.box-right {
-  display: inline-block;
-  width: 400px;
-  height: 400px;
-  overflow: auto;
-  padding: 35px 10px 0 10px;
-}
-.right-row { 
-  display: flex;
-  padding: 0px 15px;
-  border: 1px solid rgb(204, 204, 204);
-  justify-content: space-between;
-  height: 50px;
-  line-height: 50px;
-  margin-bottom: 10px;
 }

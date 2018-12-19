@@ -7,20 +7,21 @@ class RectKid extends React.Component{
   refRectKid = React.createRef();
   
   handleMouseDown = (event, index) => {
-    const { context } = this.props;
-    let rects, disX, disY, params;
-    rects = context.rects;
+    let disX, disY;
     disX = event.clientX - event.target.offsetLeft;
     disY = event.clientY - event.target.offsetTop;
-    params = { motionType: 'move', ix: index, disX, disY }
-    context.setResponseData({rects, params})
+    this.handleSetResData(index, {disX, disY})
   }
   handleResizeMouseDown = (event, index) => {
     event.stopPropagation();
+    this.handleSetResData(index)
+  }
+  handleSetResData = (index, isHas=false) => {
     const { context } = this.props;
+    const { disX, disY } = isHas;
     let rects, params;
     rects = context.rects;
-    params = { motionType: 'resize', ix: index}
+    params = isHas ? { motionType: 'move', ix: index, disX, disY } : { motionType: 'resize', ix: index}
     context.setResponseData({rects, params})
   }
   render() {
@@ -57,12 +58,9 @@ class RectKid extends React.Component{
     setResponseData: PropTypes.func,
   }
 }
-
 export const RectsBox = Context.Provider;
 export default props => (
   <Context.Consumer>
     { context => <RectKid {...props} context={context}/>}
   </Context.Consumer> 
 )
-  
-

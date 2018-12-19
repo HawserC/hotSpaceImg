@@ -76,19 +76,18 @@ class ContextProvider extends React.Component{
   }
   handleMoveEnd = () => {
     const { rects, ix } = this.state;
-    if(rects.length && (rects[ix].width < 44 || rects[ix].height < 44)) {
+    if(!!rects[ix] && (rects[ix].width < 44 || rects[ix].height < 44)) {
       rects[ix] = Object.assign({}, rects[ix], {width: 44, height: 44})
     }
-    if(rects.length && (rects[ix].x > this.refRect.current.offsetWidth - 44 )) {
+    if(!!rects[ix] && (rects[ix].x > this.refRect.current.offsetWidth - 44 )) {
       rects[ix] = Object.assign({}, rects[ix], {x: this.refRect.current.offsetWidth - 44})
     }
-    if(rects.length && rects[ix].y > this.refRect.current.offsetHeight - 44) {
+    if(!!rects[ix] && rects[ix].y > this.refRect.current.offsetHeight - 44) {
       rects[ix] = Object.assign({}, rects[ix], {y: this.refRect.current.offsetHeight - 44})
     }
     let params = {rects, motionType: null, ix: rects.length};
     this.setState(params)
   }
-
   state = {
     rects: [],  
     disX: null,
@@ -97,7 +96,6 @@ class ContextProvider extends React.Component{
     motionType: null,
     setResponseData: this.setResponseData
   }
-
   render() {
     const { children, style } = this.props;
     return (
@@ -114,14 +112,11 @@ class ContextProvider extends React.Component{
         </Provider>
     )
   }
-  
 }
 class ContextConsumer extends React.Component{
-
   state = {
     rects: []
   }
-
   static getDerivedStateFromProps(nextProps, prevState) {
     const { context } = nextProps;
     const { rects, motionType } = prevState;
@@ -130,7 +125,6 @@ class ContextConsumer extends React.Component{
     }
     return {}
   }
-
   render() {
     const { context, children } = this.props;
     const { rects } = this.state;
